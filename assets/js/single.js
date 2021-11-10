@@ -1,5 +1,5 @@
 var issueContainerEl = document.querySelector("#issues-container");
-
+var limitWarningEl = document.querySelector("#limit-warning");
 
 var getRepoIssues = function(repo){
 var apiUrl = "https://api.github.com/repos/"+ repo +"/issues?direction=asc";
@@ -8,6 +8,10 @@ fetch(apiUrl).then(function(response){
         response.json().then(function(data){
             //pass response data to dom function
             displsayIssues(data);
+             // check if api has paginated issues
+    if (response.headers.get("Link")) {
+        displayWarning(repo);
+      }
         });
     }
     else{
@@ -16,6 +20,14 @@ fetch(apiUrl).then(function(response){
 });
 };
 
+var displayWarning = function (repo) {
+    limitWarningEl.textContent = "To see more than 30 issues, visit ";
+    var linkEl = document.createElement("a");
+    linkEl.textContent = "see more Issues on GitHub.com";
+    linkEl.setAttribute("href", "https://github.com/"+ repo + "/issues");
+    linkEl.setAttribute("target", "_blank");
+    limitWarningEl.appendChild(linkEl);
+}
 
 var displsayIssues = function (issues) {
     if (issues.length === 0) {
@@ -29,7 +41,7 @@ var displsayIssues = function (issues) {
         issueEl.setAttribute("href",issues[i].html_url);
         issueEl.setAttribute("target","_blank");
         var titleEl = document.createElement("span");
-        titleEl.textContent = issues[i].title;
+        titleEl.textContent =i +". " + issues[i].title;
         issueEl.appendChild(titleEl);
         var typeEl = document.createElement("span");
         if (issues[i].pull_request) {
@@ -41,4 +53,4 @@ var displsayIssues = function (issues) {
 };
 
 
-getRepoIssues("khaoulaja/Portfolio");
+getRepoIssues("facebook/react");
