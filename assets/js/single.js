@@ -1,5 +1,20 @@
 var issueContainerEl = document.querySelector("#issues-container");
 var limitWarningEl = document.querySelector("#limit-warning");
+var repoNameEl = document.querySelector("#repo-name");
+
+var getRepoName = function () {
+    var queryString = document.location.search;
+    var repoName =queryString.split("=")[1];
+    if (repoName) {
+        getRepoIssues(repoName);
+    repoNameEl.textContent = repoName;
+    }
+    else{
+        document.location.replace("./index.html");
+    }
+    
+}
+
 
 var getRepoIssues = function(repo){
 var apiUrl = "https://api.github.com/repos/"+ repo +"/issues?direction=asc";
@@ -15,7 +30,7 @@ fetch(apiUrl).then(function(response){
         });
     }
     else{
-        alert("There was a problem with your request");
+        document.location.replace("./index.html");
     }
 });
 };
@@ -41,11 +56,14 @@ var displsayIssues = function (issues) {
         issueEl.setAttribute("href",issues[i].html_url);
         issueEl.setAttribute("target","_blank");
         var titleEl = document.createElement("span");
-        titleEl.textContent =i +". " + issues[i].title;
+        titleEl.textContent = issues[i].title;
         issueEl.appendChild(titleEl);
         var typeEl = document.createElement("span");
         if (issues[i].pull_request) {
-            typeEl.textContent = "(issues)";
+            typeEl.textContent = "(Pull request)";
+        }
+        else{
+            typeEl.textContent = "(Issue)";
         }
         issueEl.appendChild(typeEl);
         issueContainerEl.appendChild(issueEl);
@@ -53,4 +71,5 @@ var displsayIssues = function (issues) {
 };
 
 
-getRepoIssues("facebook/react");
+
+getRepoName();
