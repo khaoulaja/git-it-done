@@ -23,6 +23,7 @@ fetch(apiUrl).then(function(response){
         response.json().then(function(data){
             //pass response data to dom function
             displsayIssues(data);
+            console.log(data);
              // check if api has paginated issues
     if (response.headers.get("Link")) {
         displayWarning(repo);
